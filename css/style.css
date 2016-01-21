@@ -25,6 +25,19 @@
             overflow-y: scroll;
             overflow-x: scroll;
         }
+        pre {
+            background-color:white;
+            margin-left: 25px;
+            width:400px;
+            height:200px;
+            position: absolute;
+            overflow-y:scroll;
+            overflow-x:scroll;
+            word-break: normal;
+            word-wrap: normal;
+            white-space: pre;
+            margin-top: 50px;
+        }
         
         #blocklyArea {
             height: 99%;

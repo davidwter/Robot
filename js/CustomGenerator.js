@@ -16,6 +16,12 @@ Blockly.JavaScript['turn_right'] = function(block) {
   return code;
 };
 
+Blockly.JavaScript['report'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'reportPosition();';
+  return code;
+};
+
 
 
 Blockly.JavaScript['start'] = function(block) {

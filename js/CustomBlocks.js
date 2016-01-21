@@ -34,6 +34,18 @@ Blockly.Blocks['turn_right'] = {
   }
 };
 
+Blockly.Blocks['report'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Report position");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
 Blockly.Blocks['place_at'] = {
   init: function() {
     this.jsonInit({

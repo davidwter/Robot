@@ -23,6 +23,7 @@
         <td id="stage" width="450" valign=top>
             <canvas id="myCanvas" width="476" height="400"></canvas>
             <div id="code_area">
+                <pre id="code_field"></pre>
                 <img id="startButton" src="media/start.png" onClick="javascript:parseCode()"/>
             </div>
         </td>
@@ -38,6 +39,7 @@
     <block type="move_forward"></block>
     <block type="turn_left"></block>
     <block type="turn_right"></block>
+    <block type="report"></block>
     <block type="place_at"></block>
 </xml>
 
@@ -188,7 +190,7 @@
                     break;
                 case 2:
                     joe.gotoAndPlay('walkBack');
-                    joeRow--;
+                    joeRow++;
                     break;
                 case 3:
                     joe.gotoAndPlay('walkLeft');
@@ -196,7 +198,7 @@
                     break;
                 case 4:
                     joe.gotoAndPlay('walkFront');
-                    joeRow++;
+                    joeRow--;
                     break;
                 default:
                     break;
@@ -218,6 +220,30 @@
         if (joeHeading==0)
             joeHeading=4;
         turning=true;
+    }
+
+    function reportPosition() {
+        var toWrite ="My position is :\n";
+        toWrite+="Column :"+joeCol+"\n";
+        toWrite+="Row :"+joeRow+"\n";
+        switch(joeHeading) {
+            case 1:
+                toWrite+="Facing :East";
+                break;
+            case 2:
+                toWrite+="Facing :North";
+                break;
+            case 3:
+                toWrite+="Facing :West";
+                break;
+            case 4:
+                toWrite+="Facing :South";
+                break;
+            default:
+                break;
+        }
+        document.getElementById('code_field').textContent = toWrite;
+
     }
 
     function tick(event) {
@@ -298,12 +324,20 @@
         interpreter.setProperty(scope, 'turnLeft',
                 interpreter.createNativeFunction(wrapper));
 
-        // Add an API function for placer.
+        // Add an API function for turnRight.
         var wrapper = function() {
 
             return interpreter.createPrimitive(turnRight());
         };
         interpreter.setProperty(scope, 'turnRight',
+                interpreter.createNativeFunction(wrapper));
+
+        // Add an API function for reportPostion.
+        var wrapper = function() {
+
+            return interpreter.createPrimitive(reportPosition());
+        };
+        interpreter.setProperty(scope, 'reportPosition',
                 interpreter.createNativeFunction(wrapper));
 
         // Add an API function for tourner droite.
