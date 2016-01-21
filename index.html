@@ -20,7 +20,7 @@
 <body onload="init();">
 <table>
     <tr>
-        <td id="stage" width="600" valign=top>
+        <td id="stage" width="450" valign=top>
             <canvas id="myCanvas" width="476" height="400"></canvas>
             <div id="code_area">
                 <img id="startButton" src="media/start.png" onClick="javascript:parseCode()"/>
@@ -35,14 +35,14 @@
 
 
 <xml id="toolbox" style="display: none">
-    <block type="avancer_d_une_case"></block>
-    <block type="tourner_gauche"></block>
-    <block type="tourner_droite"></block>
-    <block type="placer"></block>
+    <block type="move_forward"></block>
+    <block type="turn_left"></block>
+    <block type="turn_right"></block>
+    <block type="place_at"></block>
 </xml>
 
 <xml id="startBlocks" style="display: none">
-    <block type="demarrage" movable="false" x="100" y="20"></block>
+    <block type="start" movable="false" x="20" y="20"></block>
 </xml>
 
 <script>
@@ -75,6 +75,11 @@
 
     var stage;
     var loader;
+    var walking = false;
+    var joeHeading = 1;
+    var joeRow = 0;
+    var joeCol = 0;
+
     function init() {
         stage = new createjs.Stage('myCanvas');
         manifest = [
@@ -91,32 +96,16 @@
         var spriteSheet = new createjs.SpriteSheet({
             framerate: 30,
             'images': [loader.getResult('joe')],
-            'frames': {'regX': 0, 'height': 64, 'count': 28, 'regY': 0, 'width': 64},
+            'frames': {'regX': 0, 'height': 50, 'count': 28, 'regY': 0, 'width': 50},
             'animations': {
-                'iddleRight': [14, 14, 'iddleRight', 0.3],
-                'walkRight': [14, 17,'iddleRight',0.4 ],
-                'iddleBack': [21, 21, 'iddleBack', 0.3],
-                'walkBack': [21, 24,'iddleBack',0.4 ],
-                'iddleLeft': [7, 7, 'iddleLeft', 0.3],
-                'walkLeft': [7, 10,'iddleLeft',0.4 ],
-                'iddleFront': [0, 0, 'iddleFront', 0.3],
-                'walkFront': [0, 3,'iddleFront',0.4 ]
+                'walkRight': [14, 17,'walkRight',0.4 ],
+                'walkBack': [21, 24,'walkBack',0.4 ],
+                'walkLeft': [7, 10,'walkLeft',0.4 ],
+                'walkFront': [0, 3,'walkFront',0.4 ]
             }
         });
-        joe = new createjs.Sprite(spriteSheet, 'iddleRight');
+        joe = new createjs.Sprite(spriteSheet, 'walkRight');
         joe.visible=false;
-
-        row0=['x','x','x','x','x','x','x','x','x','x'];
-        row1=['x','o','o','o','o','o','o','o','o','x'];
-        row2=['x','o','o','o','o','o','o','o','o','x'];
-        row3=['x','o','o','o','o','o','o','o','o','x'];
-        row4=['x','o','o','o','o','o','o','o','o','x'];
-        row5=['x','o','o','o','o','o','o','o','o','x'];
-        row6=['x','o','o','o','o','o','o','o','o','x'];
-        row7=['x','o','o','o','o','o','o','o','o','x'];
-        row8=['x','o','o','o','o','o','o','o','o','x'];
-        row9=['x','x','x','x','x','x','x','x','x','x'];
-        defLevel=[row0,row1,row2,row3,row4,row5,row6,row7,row8,row9];
 
         stage.addChild(grid,joe);
 
@@ -126,8 +115,274 @@
         turning=false;
     }
 
+    function placeRobotAt(col,row,facing) {
+        if (col>=0&&col<=7&&row>=0&&row<=7) {
+            joe.x = col * 50;
+            joe.y = 350 - row * 50;
+            joe.visible = true;
+            joeRow = row;
+            joeCol = col;
+        }
+        switch (facing) {
+            case 'North':
+                joeHeading = 2;
+                joe.gotoAndPlay('walkBack');
+                break;
+            case 'West':
+                joeHeading = 3;
+                joe.gotoAndPlay('walkLeft');
+                break;
+            case 'South':
+                joeHeading = 4;
+                joe.gotoAndPlay('walkFront');
+                break;
+            case 'East':
+                joeHeading = 1;
+                joe.gotoAndPlay('walkRight');
+                break;
+            default:
+                break;
+        }
+    }
+
+    function canWalk() {
+        switch(joeHeading) {
+            case 1:
+                if (joeCol <6)
+                    return true;
+                else
+                    return false;
+                break;
+            case 2:
+                if (joeRow <6)
+                    return true;
+                else
+                    return false;
+                break;
+            case 3:
+                if (joeCol>1)
+                    return true;
+                else
+                    return false;
+                break;
+            case 4:
+
+                if (joeRow>1)
+                    return true;
+                else
+                    return false;
+                break;
+        }
+
+    }
+
+    function moveForward() {
+        if (canWalk()) {
+            walking = true;
+            startX=joe.x;
+            startY= joe.y;
+            switch (joeHeading) {
+                case 1:
+                    joe.gotoAndPlay('walkRight');
+                    joeCol++;
+                    break;
+                case 2:
+                    joe.gotoAndPlay('walkBack');
+                    joeRow--;
+                    break;
+                case 3:
+                    joe.gotoAndPlay('walkLeft');
+                    joeCol--;
+                    break;
+                case 4:
+                    joe.gotoAndPlay('walkFront');
+                    joeRow++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+            walking = false;
+    }
+
+    function turnLeft() {
+        joeHeading++;
+        if (joeHeading==5)
+            joeHeading=1;
+        turning=true;
+    }
+
+    function turnRight() {
+        joeHeading--;
+        if (joeHeading==0)
+            joeHeading=4;
+        turning=true;
+    }
+
     function tick(event) {
+        if (walking) {
+            var deltaS = event.delta / 1000;
+            switch(joeHeading) {
+                case 1:
+                    joe.x +=  150 * deltaS;
+                    if (joe.x >=(startX+50))
+                        walking=false;
+                    break;
+                case 2:
+                    joe.y -=  150 * deltaS;
+                    if (joe.y <=(startY-50))
+                        walking=false;
+                    break;
+                case 3:
+                    joe.x -=  150 * deltaS;
+                    if (joe.x <=(startX-50))
+                        walking=false;
+                    break;
+                case 4:
+                    joe.y +=  150 * deltaS;
+                    if (joe.y >=(startY+61))
+                        walking=false;
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (turning) {
+            switch (joeHeading) {
+                case 1:
+                    joe.gotoAndPlay('walkRight');
+                    break;
+                case 2:
+                    joe.gotoAndPlay('walkBack');
+                    break;
+                case 3:
+                    joe.gotoAndPlay('walkLeft');
+                    break;
+                case 4:
+                    joe.gotoAndPlay('walkFront');
+                    break;
+                default:
+                    break;
+            }
+            turning=false;
+        }
         stage.update(event);
+    }
+
+    var myInterpreter = null;
+
+    function initApi(interpreter, scope) {
+
+        // Add an API function for highlighting blocks.
+        var wrapper = function(id) {
+            id = id ? id.toString() : '';
+            return interpreter.createPrimitive(highlightBlock(id));
+        };
+        interpreter.setProperty(scope, 'highlightBlock',
+                interpreter.createNativeFunction(wrapper));
+
+        // Add an API function for avancer une case.
+        var wrapper = function() {
+
+            return interpreter.createPrimitive(moveForward());
+        };
+        interpreter.setProperty(scope, 'moveForward',
+                interpreter.createNativeFunction(wrapper));
+
+        // Add an API function for tourner gauche.
+        var wrapper = function() {
+
+            return interpreter.createPrimitive(turnLeft());
+        };
+        interpreter.setProperty(scope, 'turnLeft',
+                interpreter.createNativeFunction(wrapper));
+
+        // Add an API function for placer.
+        var wrapper = function() {
+
+            return interpreter.createPrimitive(turnRight());
+        };
+        interpreter.setProperty(scope, 'turnRight',
+                interpreter.createNativeFunction(wrapper));
+
+        // Add an API function for tourner droite.
+        var wrapper = function(col,row,facing) {
+            col  = col ? col.toString() : '';
+            row = row ? row.toString() : '';
+            facing = facing ? facing.toString() : '';
+            return interpreter.createPrimitive(placeRobotAt(col,row,facing));
+        };
+        interpreter.setProperty(scope, 'placeRobotAt',
+                interpreter.createNativeFunction(wrapper));
+
+    }
+
+    var highlightPause = false;
+    var CodeExecuted = false;
+
+    function highlightBlock(id) {
+        workspace.highlightBlock(id);
+        highlightPause = true;
+    }
+
+
+
+    parseCode= function () {
+        if (!CodeExecuted)
+        {
+            stopAll=false;
+            startButton.src='media/reset.png';
+            CodeExecuted=true;
+            Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+            Blockly.JavaScript.addReservedWords('highlightBlock');
+            var code = Blockly.JavaScript.workspaceToCode(workspace);
+            var topBlocks=workspace.getTopBlocks();
+            myInterpreter = new Interpreter(code, initApi);
+            highlightPause = false;
+            workspace.traceOn(true);
+            workspace.highlightBlock(null);
+            if (topBlocks.length>1)
+                alert('Beware, you have orphan code blocks !');
+            else
+                stepCode();
+        }
+        else
+        {
+            startButton.src = 'media/start.png'
+            stopAll=true;
+            CodeExecuted=false;
+            joe.visible=false;
+        }
+
+    };
+
+    function stepCode() {
+        try {
+            if (!stopAll) {
+                var ok = myInterpreter.step();
+            }
+            else {
+                return;
+            }
+        }
+        finally {
+            if (!ok) {
+                return;
+            }
+        }
+        if (highlightPause) {
+            // A block has been highlighted.  Pause execution here.
+            highlightPause = false;
+            window.setTimeout(stepCode, 100);
+        }
+        else {
+            // Keep executing until a highlight statement is reached.
+            if (walking||turning)
+                window.setTimeout(stepCode, 1000);
+            else
+                stepCode();
+        }
     }
 
 

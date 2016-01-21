@@ -1,4 +1,4 @@
-Blockly.Blocks['avancer_d_une_case'] = {
+Blockly.Blocks['move_forward'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Move one step forward");
@@ -10,7 +10,7 @@ Blockly.Blocks['avancer_d_une_case'] = {
   }
 };
 
-Blockly.Blocks['tourner_gauche'] = {
+Blockly.Blocks['turn_left'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Turn left \u21BA");
@@ -22,7 +22,7 @@ Blockly.Blocks['tourner_gauche'] = {
   }
 };
 
-Blockly.Blocks['tourner_droite'] = {
+Blockly.Blocks['turn_right'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Turn right \u21BB");
@@ -34,37 +34,47 @@ Blockly.Blocks['tourner_droite'] = {
   }
 };
 
-Blockly.Blocks['placer'] = {
+Blockly.Blocks['place_at'] = {
   init: function() {
     this.jsonInit({
-      "message0": "Place robot at column %1 and row %2",
+      "message0": "Place robot at column %1 and row %2,\n facing %3",
       "args0": [
         {
           "type": "field_dropdown",
           "name": "col",
           "options": [
+            ["0","0"],
             ["1","1"],
             ["2","2"],
             ["3","3"],
             ["4","4"],
             ["5","5"],
             ["6","6"],
-            ["7","7"],
-            ["8","8"]
+            ["7","7"]
           ]
         },
         {
           "type": "field_dropdown",
           "name": "row",
           "options": [
+            ["0","0"],
             ["1","1"],
             ["2","2"],
             ["3","3"],
             ["4","4"],
             ["5","5"],
             ["6","6"],
-            ["7","7"],
-            ["8","8"]
+            ["7","7"]
+          ]
+        },
+        {
+          "type": "field_dropdown",
+          "name": "facing",
+          "options": [
+            ["North","North"],
+            ["West","West"],
+            ["South","South"],
+            ["East","East"]
           ]
         }],
       "previousStatement": null,
@@ -77,7 +87,7 @@ Blockly.Blocks['placer'] = {
 };
 
 
-Blockly.Blocks['demarrage'] = {
+Blockly.Blocks['start'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Start");

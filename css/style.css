@@ -32,7 +32,7 @@
         
         #startButton {
             float: right;
-            margin-left: 420px;
+            margin-left: 320px;
           
              position: absolute;
         }
@@ -50,7 +50,7 @@
         }
         
         #myCanvas {
-            margin-left: 125px;
+            margin-left: 25px;
             margin-top: 50px;
 
         }
