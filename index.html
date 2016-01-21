@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <title>Robot Challenge</title>
+
+    <script src="js/blockly_compressed.js"></script>
+    <script src="js/javascript_compressed.js"></script>
+    <script src="js/blocks_compressed.js"></script>
+    <script src="js/acorn_interpreter.js"></script>
+    <script src="js/en.js"></script>
+    <script src="js/easeljs-0.8.2.min.js"></script>
+    <script src="js/preloadjs-0.6.2.min.js"></script>
+    <script src="js/CustomBlocks.js"></script>
+    <script src="js/CustomGenerator.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+
+
+</head>
+<body onload="init();">
+<table>
+    <tr>
+        <td id="stage" width="600" valign=top>
+            <canvas id="myCanvas" width="476" height="400"></canvas>
+            <div id="code_area">
+                <img id="startButton" src="media/start.png" onClick="javascript:parseCode()"/>
+            </div>
+        </td>
+        <td id="blocklyArea">
+        </td>
+    </tr>
+
+</table>
+<div id="blocklyDiv" style="position: absolute"></div>
+
+
+<xml id="toolbox" style="display: none">
+    <block type="avancer_d_une_case"></block>
+    <block type="tourner_gauche"></block>
+    <block type="tourner_droite"></block>
+    <block type="placer"></block>
+</xml>
+
+<xml id="startBlocks" style="display: none">
+    <block type="demarrage" movable="false" x="100" y="20"></block>
+</xml>
+
+<script>
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('blocklyDiv');
+    var workspace = Blockly.inject(blocklyDiv,
+            {media: 'media/',
+                toolbox: document.getElementById('toolbox')});
+    Blockly.Xml.domToWorkspace(workspace,
+            document.getElementById('startBlocks'));
+
+    var onresize = function(e) {
+        // Compute the absolute coordinates and dimensions of blocklyArea.
+        var element = blocklyArea;
+        var x = 0;
+        var y = 0;
+        do {
+            x += element.offsetLeft;
+            y += element.offsetTop;
+            element = element.offsetParent;
+        } while (element);
+        // Position blocklyDiv over blocklyArea.
+        blocklyDiv.style.left = x + 'px';
+        blocklyDiv.style.top = y + 'px';
+        blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+        blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+    };
+    window.addEventListener('resize', onresize, false);
+    onresize();
+
+    var stage;
+    var loader;
+    function init() {
+        stage = new createjs.Stage('myCanvas');
+        manifest = [
+            {src: 'ffam28.png', id: 'joe'},
+            {src: 'grid.png', id: 'grid'}
+        ];
+        loader = new createjs.LoadQueue(false);
+        loader.addEventListener('complete', handleComplete);
+        loader.loadManifest(manifest, true, 'media/');
+    }
+
+    function handleComplete() {
+        grid = new createjs.Bitmap(loader.getResult('grid'));
+        var spriteSheet = new createjs.SpriteSheet({
+            framerate: 30,
+            'images': [loader.getResult('joe')],
+            'frames': {'regX': 0, 'height': 64, 'count': 28, 'regY': 0, 'width': 64},
+            'animations': {
+                'iddleRight': [14, 14, 'iddleRight', 0.3],
+                'walkRight': [14, 17,'iddleRight',0.4 ],
+                'iddleBack': [21, 21, 'iddleBack', 0.3],
+                'walkBack': [21, 24,'iddleBack',0.4 ],
+                'iddleLeft': [7, 7, 'iddleLeft', 0.3],
+                'walkLeft': [7, 10,'iddleLeft',0.4 ],
+                'iddleFront': [0, 0, 'iddleFront', 0.3],
+                'walkFront': [0, 3,'iddleFront',0.4 ]
+            }
+        });
+        joe = new createjs.Sprite(spriteSheet, 'iddleRight');
+        joe.visible=false;
+
+        row0=['x','x','x','x','x','x','x','x','x','x'];
+        row1=['x','o','o','o','o','o','o','o','o','x'];
+        row2=['x','o','o','o','o','o','o','o','o','x'];
+        row3=['x','o','o','o','o','o','o','o','o','x'];
+        row4=['x','o','o','o','o','o','o','o','o','x'];
+        row5=['x','o','o','o','o','o','o','o','o','x'];
+        row6=['x','o','o','o','o','o','o','o','o','x'];
+        row7=['x','o','o','o','o','o','o','o','o','x'];
+        row8=['x','o','o','o','o','o','o','o','o','x'];
+        row9=['x','x','x','x','x','x','x','x','x','x'];
+        defLevel=[row0,row1,row2,row3,row4,row5,row6,row7,row8,row9];
+
+        stage.addChild(grid,joe);
+
+        createjs.Ticker.timingMode = createjs.Ticker.RAF;
+        createjs.Ticker.addEventListener('tick', tick);
+        walking=false;
+        turning=false;
+    }
+
+    function tick(event) {
+        stage.update(event);
+    }
+
+
+</script>
+
+
+</body>
+</html>
+

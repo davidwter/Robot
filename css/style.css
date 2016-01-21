@@ -1,0 +1,57 @@
+ html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+        
+        body {
+            background-color: rgb(59, 174, 181);
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        
+        h1 {
+            font-weight: normal;
+            font-size: 140%;
+        }
+
+        table {
+            height: 100%;
+            width: 100%;
+        }
+        
+        textarea {
+            resize: none;
+            overflow-y: scroll;
+            overflow-x: scroll;
+        }
+        
+        #blocklyArea {
+            height: 99%;
+        }
+        
+        #startButton {
+            float: right;
+            margin-left: 420px;
+          
+             position: absolute;
+        }
+        
+         #startButtonPlayer {
+             position: relative;
+        }
+        
+        #logo {
+            margin-left: 40px;
+        }
+        
+        #stage {
+            background-color: rgb(40, 40, 40);
+        }
+        
+        #myCanvas {
+            margin-left: 125px;
+            margin-top: 50px;
+
+        }
+        
